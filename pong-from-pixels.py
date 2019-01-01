@@ -17,6 +17,8 @@ decay_rate = 0.99 # decay factor for RMSProp leaky sum of grad^2
 resume = False # resume from previous checkpoint?
 render = False
 
+no_op_smoothing_factor = 10 # the higher this is, the less likely a no-op action is taken by the agent
+
 # model initialization
 D = 80 * 80 # input dimensionality: 80x80 grid
 if resume:
@@ -48,7 +50,6 @@ def discount_rewards(r):
   so that the most recent action has a greater weight """
   discounted_r = np.zeros_like(r)
   running_add = 0
-  print reward
   for t in reversed(xrange(0, r.size)): # xrange is no longer supported in Python 3
     if r[t] != 0: running_add = 0 # reset the sum, since this was a game boundary (pong specific!)
     # the line above ensures we only start accounting for the actions before the reward was received
@@ -78,10 +79,11 @@ def policy_backward(eph, epx, epdlogp):
   return {'W1':dW1, 'W2':dW2}
 
 env = gym.make("Pong-v0")
-env = wrappers.Monitor(env, 'tmp/pong-base', force=True)
+env = wrappers.Monitor(env, 'tmp/pong-STAY-testing', force=True)
 observation = env.reset()
 prev_x = None # used in computing the difference frame
 xs,hs,dlogps,drs = [],[],[],[]
+trailing_aprobs = np.full((50,), 0.5)
 running_reward = None
 reward_sum = 0
 episode_number = 0
@@ -100,7 +102,18 @@ while True:
   # I think this step is randomly choosing a number which is the basis of making an action decision
   # and if the number is less than the probability of UP output from our neural network given the image
   # then go down
-  action = 2 if np.random.uniform() < aprob else 3 # roll the dice! 2 is UP, 3 is DOWN, 0 is stay the same
+
+  trailing_aprobs = np.append(trailing_aprobs, aprob)[1:51]
+  aprobs_std = np.std(trailing_aprobs)
+
+  random_prob = np.random.uniform()
+  # 2 is UP, 3 is DOWN, 0 is stay the same
+  if (aprob - aprobs_std / no_op_smoothing_factor <= random_prob <= aprob + aprobs_std / no_op_smoothing_factor):
+    action = 0
+  elif (random_prob < aprob - aprobs_std / no_op_smoothing_factor):
+    action = 2
+  else:
+    action = 3
 
   # record various intermediates (needed later for backprop).
   # This code would have otherwise been handled by a NN library
