@@ -32,6 +32,8 @@ A minor fix was added which crops more of the image vs the base repo, by removin
 
 The agent that played this game was trained for ~10000 episodes (basically 10000 episodes of 'best-of-21' rounds) over a period of ~ 13 hours, on a Macbook Pro 2018 with 2.6GHz i7 (6 cores).  The running mean score per episode, over the trailing 100 episodes, at the point I stopped training was 2.5, i.e. the trained AI Agent would win each episode 21 points to 18.5.
 
+Training for another 10 hour for another 5000 espidoes allowed the trained AI Agent to reach a running mean score per epsisode of 5, i.e. the trained AI Agent would win each episode 21 points to 16.
+
 **Graph of reward over time - first 10000 episodes of training**
 ![Reward over time with bugfix](https://github.com/omkarv/pong-from-pixels/blob/master/experiment-output/bugfix-rewards-chart.png)
 
