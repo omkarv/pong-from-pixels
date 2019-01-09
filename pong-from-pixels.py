@@ -16,11 +16,11 @@ gamma = 0.99 # discount factor for reward
 decay_rate = 0.99 # decay factor for RMSProp leaky sum of grad^2
 
 # Config flags - video output and res
-resume = False # resume training from previous checkpoint (from save.p  file)?
+resume = True # resume training from previous checkpoint (from save.p  file)?
 render = False # render video output?
 
 # model initialization
-D = 80 * 80 # input dimensionality: 80x80 grid
+D = 75 * 80 # input dimensionality: 75x80 grid
 if resume:
   model = pickle.load(open('save.p', 'rb'))
 else:
@@ -35,8 +35,8 @@ def sigmoid(x):
   return 1.0 / (1.0 + np.exp(-x)) # sigmoid "squashing" function to interval [0,1]
 
 def prepro(I):
-  """ prepro 210x160x3 uint8 frame into 6400 (80x80) 1D float vector """
-  I = I[35:185] # crop - remove 35px from start & end of image in x, to reduce redundant parts of image (i.e. after ball passes paddle)
+  """ prepro 210x160x3 uint8 frame into 6000 (75x80) 1D float vector """
+  I = I[35:185] # crop - remove 35px from start & 25px from end of image in x, to reduce redundant parts of image (i.e. after ball passes paddle)
   I = I[::2,::2,0] # downsample by factor of 2.
   I[I == 144] = 0 # erase background (background type 1)
   I[I == 109] = 0 # erase background (background type 2)
