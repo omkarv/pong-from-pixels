@@ -37,7 +37,7 @@ The agent that played this game was trained for ~10000 episodes (basically 10000
 
 **Graph of reward over time - 10000 to 15000 episodes of training**
 
-![Reward over time after 10000 episodes](https://github.com/omkarv/pong-from-pixels/blob/master/experiment-output/Screen Shot 2019-01-09 at 8.07.44 AM.png)
+![Reward over time after 10000 episodes](https://github.com/omkarv/pong-from-pixels/blob/master/experiment-output/bugfix-rewards-chart-after-10000.png)
 ### Modifications vs Source Gist
 * Records output video of the play
 * Modified learning rate from 1e-4 to 1e-3
